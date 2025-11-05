@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token')
         NETLIFY_SITE_ID = '88b2d35d-78f7-4678-a3f8-51455e0666e0' 
+        NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token')
     }
 
     stages {
@@ -27,7 +27,7 @@ pipeline {
         stage('Test') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'node:18.20.8-alpine3.21'
                     reuseNode true
                 }
             }
@@ -36,18 +36,6 @@ pipeline {
                     test -f ./build/index.html
                     npm test
                 '''
-                post {
-                    always {
-                        publishHTML(target: [
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: false,
-                            keepAll: true,
-                            reportDir: 'coverage/lcov-report',
-                            reportFiles: 'index.html',
-                            reportName: 'Code Coverage Report'
-                        ])
-                    }
-                }
             }
         }
         stage('Deploy') {
