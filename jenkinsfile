@@ -3,7 +3,7 @@ pipeline {
 
     stages {
         stage('Build') {
-            agent{
+            agent {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
@@ -19,8 +19,9 @@ pipeline {
                 '''
             }
         }
+
         stage('Test') {
-            agent{
+            agent {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
@@ -34,46 +35,47 @@ pipeline {
                 '''
             }
         }
+
         stage('E2E') {
-            agent{
+            agent {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
-                 sh '''
-           # Install system dependencies for Playwright
-           apk add --no-cache \
-             chromium \
-             nss \
-             freetype \
-             harfbuzz \
-             ca-certificates \
-             ttf-freefont \
-             wget \
-             bash
+                sh '''
+                   # Install system dependencies for Playwright
+                   apk add --no-cache \
+                     chromium \
+                     nss \
+                     freetype \
+                     harfbuzz \
+                     ca-certificates \
+                     ttf-freefont \
+                     wget \
+                     bash
 
-           # Install project dependencies
-           npm ci
+                   # Install project dependencies
+                   npm ci
 
-           # Install Playwright browsers (without --with-deps)
-           npx playwright install
+                   # Install Playwright browsers (without --with-deps)
+                   npx playwright install
 
-           # Start static server in background
-           npm install -g serve
-           nohup serve -s build -l 5000 &
+                   # Start static server in background
+                   npm install -g serve
+                   nohup serve -s build -l 5000 &
 
-           # Run Playwright tests
-           npx playwright test --reporter=junit --output=test-results
-        '''
+                   # Run Playwright tests
+                   npx playwright test --reporter=junit --output=test-results
+                '''
+            }
+        }
     }
-    }
-    
+
     post {
         always {
             junit 'test-results/junit.xml'
         }
-    }
     }
 }
