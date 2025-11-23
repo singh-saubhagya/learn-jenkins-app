@@ -42,17 +42,32 @@ pipeline {
                 }
             }
             steps {
-                
-                sh '''
-                   npm ci
-                   npx playwright install --with-deps
-                   npm install -g serve
-                   nohup serve -s build -l 5000 &
-                   npx playwright test --reporter=junit --output=test-results
-                
-                   '''
-            }
-        }
+                 sh '''
+           # Install system dependencies for Playwright
+           apk add --no-cache \
+             chromium \
+             nss \
+             freetype \
+             harfbuzz \
+             ca-certificates \
+             ttf-freefont \
+             wget \
+             bash
+
+           # Install project dependencies
+           npm ci
+
+           # Install Playwright browsers (without --with-deps)
+           npx playwright install
+
+           # Start static server in background
+           npm install -g serve
+           nohup serve -s build -l 5000 &
+
+           # Run Playwright tests
+           npx playwright test --reporter=junit --output=test-results
+        '''
+    }
     }
     
     post {
