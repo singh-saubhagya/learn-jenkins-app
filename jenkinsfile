@@ -57,7 +57,12 @@ pipeline {
                      bash
 
                    # Install project dependencies
-                   npm ci
+                   npm ci \
+                   --fetch-retries=5 \
+                   --fetch-retry-mintimeout=20000 \
+                   --fetch-retry-maxtimeout=120000 \
+                   --fetch-timeout=600000
+
 
                    # Install Playwright browsers (without --with-deps)
                    npx playwright install
