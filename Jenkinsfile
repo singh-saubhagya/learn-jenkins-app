@@ -21,7 +21,7 @@ pipeline {
                 '''
             }
         }*/
-        cleanWs()
+        
         stage('Test') {
             agent {
                 docker{
@@ -39,8 +39,8 @@ pipeline {
             }
         }
 
-
-
+         
+        cleanWs()
         stage('E2E') {
             agent {
                 docker{
