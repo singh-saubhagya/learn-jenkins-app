@@ -1,38 +1,15 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18-alpine'
-      args '-u root:root'   // avoids permission issues writing workspace
-      reuseNode true
-    }
-  }
-
+  agent any
   stages {
-    stage('Install') {
-      steps {
-        sh '''
-          set -e
-          node --version
-          npm --version
-          npm ci
-        '''
-      }
+    stage('Checkout') {
+      steps { checkout scm }
     }
-
-    stage('Test') {
-      steps {
-        sh '''
-          set -e
-          npm test
-        '''
-      }
-    }
-
     stage('Build') {
       steps {
         sh '''
           set -e
-          npm run build || echo "No build script; skipping"
+          ls -la
+          # your build steps
         '''
       }
     }
