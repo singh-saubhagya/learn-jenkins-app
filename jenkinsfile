@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // This ensures Jenkins is inside a real git repo
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh '''
+                  set -e
+                  echo "Current directory:"
+                  pwd
+                  echo "Git status:"
+                  git status
+                  ls -la
+                '''
+            }
+        }
+    }
+}
